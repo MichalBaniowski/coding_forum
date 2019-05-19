@@ -1,0 +1,4 @@
+hostName=smtp.gmail.com
+userName=codingforumsevice
+password=codingforum123
+sender=codingforumsevice@gmail.com
