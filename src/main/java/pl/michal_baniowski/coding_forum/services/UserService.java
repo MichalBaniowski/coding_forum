@@ -32,11 +32,11 @@ public class UserService {
         }catch (UpdateFailException e){
             return false;
         }
-        sendEmailWhithActivationCode(user.getEmail(), user.getId());
+        sendEmailWithActivationCode(user.getEmail(), user.getId());
         return true;
     }
 
-    private void sendEmailWhithActivationCode(String addressee, long userId) {
+    private void sendEmailWithActivationCode(String addressee, long userId) {
         String activationLink = ActivationService.getInstance().getActivationLink(userId);
         String message = String.format("Witaj, oto link aktywacyjny:  %s", activationLink);
         EmailService.getInstance().sendMessage(message, addressee, "link aktywacyjny ");

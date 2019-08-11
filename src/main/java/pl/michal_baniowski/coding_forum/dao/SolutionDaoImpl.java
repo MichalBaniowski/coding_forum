@@ -1,20 +1,27 @@
 package pl.michal_baniowski.coding_forum.dao;
 
+import pl.michal_baniowski.coding_forum.dao.interfacesDao.ExerciseDao;
 import pl.michal_baniowski.coding_forum.dao.interfacesDao.SolutionDao;
+import pl.michal_baniowski.coding_forum.dao.interfacesDao.VoteDao;
 import pl.michal_baniowski.coding_forum.dbUtil.DbUtil;
 import pl.michal_baniowski.coding_forum.model.Exercise;
 import pl.michal_baniowski.coding_forum.model.Solution;
 import pl.michal_baniowski.coding_forum.model.User;
 import pl.michal_baniowski.coding_forum.exception.NotFoundException;
 import pl.michal_baniowski.coding_forum.exception.UpdateFailException;
+import pl.michal_baniowski.coding_forum.model.Vote;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SolutionDaoImpl implements SolutionDao {
 
     private static SolutionDaoImpl solutionDao;
+    private ExerciseDao exerciseDao;
+    private VoteDao voteDao;
 
     public synchronized static SolutionDaoImpl getInstance(){
         if(solutionDao == null){
@@ -23,40 +30,38 @@ public class SolutionDaoImpl implements SolutionDao {
         return solutionDao;
     }
 
-    private SolutionDaoImpl(){}
+    private SolutionDaoImpl(){
+        this.exerciseDao = ExerciseDaoImpl.getInstance();
+        this.voteDao = VoteDaoImpl.getInstance();
+    }
 
-    private static final String CREATE_SOLUTION_QUERY = "INSERT INTO solutions (exercise_id, username, description, up_vote, down_vote) " +
+    private static final String CREATE_SOLUTION_QUERY =
+            "INSERT INTO solutions (exercise_id, author, created, updated, description) " +
             "VALUES (?, ?, ?, ?, ?);";
     private static final String READ_SOLUTION_QUERY =
-            "SELECT solution_id, solutions.exercise_id, username, created, updated, solutions.description AS solution_description, up_vote, down_vote, " +
-                    "title, exercises.description AS exercise_description " +
-                    "FROM solutions, exercises " +
-                    "WHERE solutions.exercise_id = exercises.exercise_id " +
-                    "AND solution_id = ?;";
+            "SELECT solution_id, exercise_id, author, created, updated, description " +
+                    "FROM solutions " +
+                    "WHERE solution_id = ?;";
     private static final String READ_ALL_SOLUTIONS_BY_USERNAME_QUERY =
-            "SELECT solution_id, solutions.exercise_id, username, created, updated, solutions.description AS solution_description, up_vote, down_vote, " +
-                    "title, exercises.description AS exercise_description " +
-                    "FROM solutions, exercises " +
-                    "WHERE solutions.exercise_id = exercises.exercise_id " +
-                    "AND username = ?;";
+            "SELECT solution_id, exercise_id, author, created, updated, description " +
+                    "FROM solutions " +
+                    "WHERE author = ?;";
     private static final String READ_ALL_SOLUTIONS_BY_EXERCISE_QUERY =
-            "SELECT solution_id, solutions.exercise_id, username, created, updated, solutions.description AS solution_description, up_vote, down_vote, " +
-                    "title, exercises.description AS exercise_description " +
-                    "FROM solutions, exercises " +
-                    "WHERE solutions.exercise_id = exercises.exercise_id " +
-                    "AND solutions.exercise_id = ?;";
+            "SELECT solution_id, exercise_id, author, created, updated, description " +
+                    "FROM solutions " +
+                    "WHERE exercise_id = ?;";
     private static final String READ_ALL_SOLUTIONS_QUERY =
-            "SELECT solution_id, solutions.exercise_id, username, created, updated, solutions.description AS solution_description, up_vote, down_vote, " +
-                    "title, exercises.description AS exercise_description " +
-                    "FROM solutions, exercises " +
-                    "WHERE solutions.exercise_id = exercises.exercise_id;";
-    private static final String UPDATE_SOLUTION_QUERY = "UPDATE solutions SET updated = NOW(), description = ?, up_vote = ?, down_vote = ? WHERE solution_id = ?;";
+            "SELECT solution_id, exercise_id, author, created, updated, description " +
+                    "FROM solutions; ";
+    private static final String UPDATE_SOLUTION_QUERY = "UPDATE solutions " +
+            "SET updated = ?, description = ? WHERE solution_id = ?;";
     private static final String DELETE_SOLUTION_QUERY = "DELETE FROM solutions WHERE solution_id = ?";
+
     @Override
-    public List<Solution> getAllByUser(User user) {
+    public List<Solution> getAllByUsername(String username) {
         try(Connection connection = DbUtil.getInstance().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(READ_ALL_SOLUTIONS_BY_USERNAME_QUERY)){
-            preparedStatement.setString(1, user.getUsername());
+            preparedStatement.setString(1, username);
             return getAllSolutionsFromPreparedStatement(preparedStatement);
         }catch (SQLException e){
             e.printStackTrace();
@@ -65,10 +70,10 @@ public class SolutionDaoImpl implements SolutionDao {
     }
 
     @Override
-    public List<Solution> getAllByExercise(Exercise exercise) {
+    public List<Solution> getAllByExercise(Long exerciseId) {
         try(Connection connection = DbUtil.getInstance().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(READ_ALL_SOLUTIONS_BY_EXERCISE_QUERY)){
-            preparedStatement.setLong(1, exercise.getId());
+            preparedStatement.setLong(1, exerciseId);
             return getAllSolutionsFromPreparedStatement(preparedStatement);
         }catch (SQLException e){
             e.printStackTrace();
@@ -91,6 +96,7 @@ public class SolutionDaoImpl implements SolutionDao {
             }
         }catch (SQLException e){
             e.printStackTrace();
+            throw new UpdateFailException("creation failure");
         }
         return newObject;
     }
@@ -167,28 +173,30 @@ public class SolutionDaoImpl implements SolutionDao {
     public Solution getSolutionFromResultSet(ResultSet resultSet) throws SQLException {
         Solution solution = new Solution();
         solution.setId(resultSet.getLong("solution_id"));
-        solution.setExercise(ExerciseDaoImpl.getInstance().getExerciseFromResultSet(resultSet));
-        solution.setUsername(resultSet.getString("username"));
+        solution.setExercise(ExerciseDaoImpl.getInstance().read(resultSet.getLong("exercise_id")));
+        solution.setAuthor(resultSet.getString("author"));
         solution.setCreated(resultSet.getTimestamp("created"));
         solution.setUpdated(resultSet.getTimestamp("updated"));
-        solution.setDescription(resultSet.getString("solution_description"));
-        solution.setUpVote(resultSet.getInt("up_vote"));
-        solution.setDownVote(resultSet.getInt("down_vote"));
+        solution.setDescription(resultSet.getString("description"));
+        solution.setVotes(getSolutionVotes(solution.getId()));
         return solution;
+    }
+
+    private Set<Vote> getSolutionVotes(Long solutionId) {
+        return voteDao.getSolutionVotes(solutionId).stream().collect(Collectors.toSet());
     }
 
     public void setSolutionCreateColumn(Solution solution, PreparedStatement preparedStatement) throws SQLException{
         preparedStatement.setLong(1, solution.getExercise().getId());
-        preparedStatement.setString(2, solution.getUsername());
-        preparedStatement.setString(3, solution.getDescription());
-        preparedStatement.setInt(4, solution.getUpVote());
-        preparedStatement.setInt(5, solution.getDownVote());
+        preparedStatement.setString(2, solution.getAuthor());
+        preparedStatement.setTimestamp(3, solution.getCreated());
+        preparedStatement.setTimestamp(4, solution.getUpdated());
+        preparedStatement.setString(5, solution.getDescription());
     }
 
     public void setSolutionUpdateColumn(Solution solution, PreparedStatement preparedStatement) throws SQLException{
-        preparedStatement.setString(1, solution.getDescription());
-        preparedStatement.setInt(2, solution.getUpVote());
-        preparedStatement.setInt(3, solution.getDownVote());
-        preparedStatement.setLong(4, solution.getId());
+        preparedStatement.setTimestamp(1, solution.getUpdated());
+        preparedStatement.setString(2, solution.getDescription());
+        preparedStatement.setLong(3, solution.getId());
     }
 }

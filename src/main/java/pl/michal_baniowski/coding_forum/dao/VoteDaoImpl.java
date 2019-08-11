@@ -9,13 +9,16 @@ import pl.michal_baniowski.coding_forum.model.VoteType;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class VoteDaoImpl implements VoteDao {
 
     private static final String CREATE_VOTE = "INSERT INTO vote (solution_id, username, type) VALUES(?, ?, ?);";
     private static final String READ_VOTE = "SELECT * FROM vote WHERE vote_id = ?;";
     private static final String READ_ALL_VOTES = "SELECT * FROM vote;";
+    private static final String READ_ALL_SOLUTION_VOTES = "SELECT * FROM vote WHERE solution_id = ?;";
     private static final String READ_VOTE_BY_USER_ID_SOLUTION_ID = "SELECT * FROM vote WHERE username = ? AND solution_id = ?";
     private static final String UPDATE_VOTE = "UPDATE vote SET type = ? WHERE vote_id = ?;";
     private static final String DELETE_VOTE = "DELETE FROM vote WHERE vote_id = ?;";
@@ -32,7 +35,7 @@ public class VoteDaoImpl implements VoteDao {
     private VoteDaoImpl(){}
 
     @Override
-    public Vote getVoteByUserIdSolutionId(String username, long solutionId) throws NotFoundException {
+    public Vote getVoteByUsernameSolutionId(String username, long solutionId) throws NotFoundException {
         try(Connection connection = DbUtil.getInstance().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(READ_VOTE_BY_USER_ID_SOLUTION_ID)){
             preparedStatement.setString(1, username);
@@ -42,6 +45,18 @@ public class VoteDaoImpl implements VoteDao {
             e.printStackTrace();
         }
         throw new NotFoundException("vote not found");
+    }
+
+    @Override
+    public List<Vote> getSolutionVotes(Long solutionId) {
+        try (Connection connection = DbUtil.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(READ_ALL_SOLUTION_VOTES)){
+            preparedStatement.setLong(1, solutionId);
+            return getAllVoteFromPreparedStatement(preparedStatement);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     @Override

@@ -1,11 +1,17 @@
 package pl.michal_baniowski.coding_forum.model;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Exercise {
-    private long id;
+    private Long id;
     private String title;
     private String description;
+    private String username;
+    private Timestamp created;
+    private Timestamp updated;
+
 
     public Exercise() {}
 
@@ -13,19 +19,33 @@ public class Exercise {
         this.id = exercise.id;
         this.title = exercise.title;
         this.description = exercise.description;
+        this.username = exercise.username;
+        this.created = new Timestamp(exercise.created.getTime());
+        this.updated = new Timestamp(exercise.updated.getTime());
     }
 
-    public Exercise(long id, String title, String description) {
-        this(title, description);
+    public Exercise(long id, String title, String description, String username, Timestamp created, Timestamp updated) {
+        this(title, description, username, created, updated);
         this.id = id;
     }
 
-    public Exercise(String title, String description) {
+    public Exercise(String title, String description, String username, Timestamp created, Timestamp updated) {
         this.title = title;
         this.description = description;
+        this.updated = updated;
+        this.created = created;
+        this.username = username;
     }
 
-    public long getId() {
+    public Exercise(String title, String description, String username) {
+        this.title = title;
+        this.description = description;
+        this.username = username;
+        this.created = Timestamp.valueOf(LocalDateTime.now());
+        this.updated = Timestamp.valueOf(LocalDateTime.now());
+    }
+
+    public Long getId() {
         return id;
     }
 
@@ -47,6 +67,30 @@ public class Exercise {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Timestamp getCreated() {
+        return created;
+    }
+
+    public void setCreated(Timestamp created) {
+        this.created = created;
+    }
+
+    public Timestamp getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Timestamp updated) {
+        this.updated = updated;
     }
 
     @Override
@@ -75,6 +119,12 @@ public class Exercise {
                 .append(title)
                 .append(", description = ")
                 .append(description)
+                .append(", author = ")
+                .append(username)
+                .append(", created = ")
+                .append(created)
+                .append(", updated = ")
+                .append(updated)
                 .append('}')
                 .toString();
     }

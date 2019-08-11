@@ -25,14 +25,14 @@ DROP TABLE IF EXISTS `comments`;
 CREATE TABLE `comments` (
   `comment_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `solution_id` int(10) unsigned NOT NULL,
-  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `author` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `description` text COLLATE utf8_polish_ci NOT NULL,
-  `date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`comment_id`),
-  KEY `fk_solutions_has_users_users3_idx` (`username`),
+  KEY `fk_solutions_has_users_users3_idx` (`author`),
   KEY `fk_solutions_has_users_solutions2_idx` (`solution_id`),
   CONSTRAINT `fk_solutions_has_users_solutions2` FOREIGN KEY (`solution_id`) REFERENCES `solutions` (`solution_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_solutions_has_users_users3` FOREIGN KEY (`username`) REFERENCES `users` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_solutions_has_users_users3` FOREIGN KEY (`author`) REFERENCES `users` (`author`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -103,7 +103,7 @@ DROP TABLE IF EXISTS `solutions`;
 CREATE TABLE `solutions` (
   `solution_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `exercise_id` int(10) unsigned NOT NULL,
-  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `author` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `description` text COLLATE utf8_polish_ci NOT NULL,
@@ -111,11 +111,11 @@ CREATE TABLE `solutions` (
   `down_vote` int(11) NOT NULL,
   PRIMARY KEY (`solution_id`),
   UNIQUE KEY `exercise_id_UNIQUE` (`exercise_id`),
-  UNIQUE KEY `username_UNIQUE` (`username`),
-  KEY `fk_exercises_has_users_users1_idx` (`username`),
+  UNIQUE KEY `username_UNIQUE` (`author`),
+  KEY `fk_exercises_has_users_users1_idx` (`author`),
   KEY `fk_exercises_has_users_exercises1_idx` (`exercise_id`),
   CONSTRAINT `fk_exercises_has_users_exercises1` FOREIGN KEY (`exercise_id`) REFERENCES `exercises` (`exercise_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_exercises_has_users_users1` FOREIGN KEY (`username`) REFERENCES `users` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_exercises_has_users_users1` FOREIGN KEY (`author`) REFERENCES `users` (`author`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -160,13 +160,13 @@ DROP TABLE IF EXISTS `user_role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `user_role` (
-  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `author` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `role_name` varchar(45) COLLATE utf8_polish_ci NOT NULL,
-  PRIMARY KEY (`username`,`role_name`),
+  PRIMARY KEY (`author`,`role_name`),
   KEY `fk_users_has_role_role1_idx` (`role_name`),
-  KEY `fk_users_has_role_users1_idx` (`username`),
+  KEY `fk_users_has_role_users1_idx` (`author`),
   CONSTRAINT `fk_users_has_role_role1` FOREIGN KEY (`role_name`) REFERENCES `role` (`role_name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_users_has_role_users1` FOREIGN KEY (`username`) REFERENCES `users` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_users_has_role_users1` FOREIGN KEY (`author`) REFERENCES `users` (`author`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -188,13 +188,13 @@ DROP TABLE IF EXISTS `users`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `users` (
   `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `author` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `email` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `password` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `is_active` tinyint(4) NOT NULL,
   `user_group_id` int(10) unsigned DEFAULT NULL,
-  PRIMARY KEY (`user_id`,`username`),
-  UNIQUE KEY `usrename_UNIQUE` (`username`),
+  PRIMARY KEY (`user_id`,`author`),
+  UNIQUE KEY `usrename_UNIQUE` (`author`),
   UNIQUE KEY `user_id_UNIQUE` (`user_id`),
   UNIQUE KEY `email_UNIQUE` (`email`),
   KEY `fk_users_user_groups_idx` (`user_group_id`),
@@ -221,14 +221,14 @@ DROP TABLE IF EXISTS `vote`;
 CREATE TABLE `vote` (
   `vote_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `solution_id` int(10) unsigned NOT NULL,
-  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `author` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `type` varchar(15) COLLATE utf8_polish_ci NOT NULL,
   PRIMARY KEY (`vote_id`),
-  UNIQUE KEY `users_username_UNIQUE` (`username`),
-  KEY `fk_solutions_has_users_users2_idx` (`username`),
+  UNIQUE KEY `users_username_UNIQUE` (`author`),
+  KEY `fk_solutions_has_users_users2_idx` (`author`),
   KEY `fk_solutions_has_users_solutions1_idx` (`solution_id`),
   CONSTRAINT `fk_solutions_has_users_solutions1` FOREIGN KEY (`solution_id`) REFERENCES `solutions` (`solution_id`),
-  CONSTRAINT `fk_solutions_has_users_users2` FOREIGN KEY (`username`) REFERENCES `users` (`username`)
+  CONSTRAINT `fk_solutions_has_users_users2` FOREIGN KEY (`author`) REFERENCES `users` (`author`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

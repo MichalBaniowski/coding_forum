@@ -19,7 +19,7 @@
         <form action="/edit-user" method="post">
             <div class="form-group">
                 <label for="userName">Nazwa Użytkownika</label>
-                <input type="text" class="form-control" id="userName" name="username" value="${user.username}" required>
+                <input type="text" class="form-control" id="userName" name="author" value="${user.author}" required>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>

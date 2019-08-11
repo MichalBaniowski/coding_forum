@@ -8,16 +8,17 @@
               driverClassName="com.mysql.cj.jdbc.Driver"
               connectionProperties="useSSL=false;useUnicode=yes;characterEncoding=utf8;serverTimezone=UTC;allowPublicKeyRetrieval=true"
               url="jdbc:mysql://localhost:3306/coding_forum"
+              initialSize="10"
               maxTotal="100"
               maxIdle="30"
               maxWaitMillis="10000" />
     <Realm
-        className="org.apache.catalina.realm.DataSourceRealm"
-        dataSourceName="jdbc/coding_forum"
-        userTable="users"
-        userNameCol="username"
-        userCredCol="password"
-        userRoleTable="user_role"
-        roleNameCol="role_name"
-        localDataSource="true"/>
+            className="org.apache.catalina.realm.DataSourceRealm"
+            dataSourceName="jdbc/coding_forum"
+            userTable="users"
+            userNameCol="username"
+            userCredCol="password"
+            userRoleTable="user_role"
+            roleNameCol="role_name"
+            localDataSource="true"/>
 </Context>

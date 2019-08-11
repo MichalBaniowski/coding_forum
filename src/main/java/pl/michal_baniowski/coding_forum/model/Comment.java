@@ -1,37 +1,39 @@
 package pl.michal_baniowski.coding_forum.model;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Comment {
-    private long id;
+    private Long id;
     private long solutionId;
-    private String username;
+    private String author;
     private String description;
-    private Timestamp date;
+    private Timestamp created;
 
     public Comment() {}
 
     public Comment(Comment comment){
         this.id = comment.id;
         this.solutionId = comment.solutionId;
-        this.username = comment.username;
+        this.author = comment.author;
         this.description = comment.description;
-        this.date = new Timestamp(comment.date.getTime());
+        this.created = new Timestamp(comment.created.getTime());
     }
 
-    public Comment(long solutionId, String username, String description, Timestamp date) {
-        this(solutionId, username, description);
-        this.date = date;
+    public Comment(long solutionId, String author, String description, Timestamp created) {
+        this(solutionId, author, description);
+        this.created = created;
     }
 
-    public Comment(long solutionId, String username, String description) {
+    public Comment(long solutionId, String author, String description) {
         this.solutionId = solutionId;
-        this.username = username;
+        this.author = author;
         this.description = description;
+        this.created = Timestamp.valueOf(LocalDateTime.now());
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -47,12 +49,12 @@ public class Comment {
         this.solutionId = solutionId;
     }
 
-    public String getUsername() {
-        return username;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public String getDescription() {
@@ -63,12 +65,12 @@ public class Comment {
         this.description = description;
     }
 
-    public Timestamp getDate() {
-        return date;
+    public Timestamp getCreated() {
+        return created;
     }
 
-    public void setDate(Timestamp date) {
-        this.date = date;
+    public void setCreated(Timestamp created) {
+        this.created = created;
     }
 
     @Override
@@ -78,14 +80,14 @@ public class Comment {
         Comment comment = (Comment) o;
         return id == comment.id &&
                 solutionId == comment.solutionId &&
-                username == comment.username &&
+                author == comment.author &&
                 description.equals(comment.description) &&
-                date.equals(comment.date);
+                created.equals(comment.created);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, solutionId, username, description, date);
+        return Objects.hash(id, solutionId, author, description, created);
     }
 
     @Override
@@ -93,9 +95,9 @@ public class Comment {
         return "Comment{" +
                 "id=" + id +
                 ", solutionId=" + solutionId +
-                ", username=" + username +
+                ", author=" + author +
                 ", description='" + description + '\'' +
-                ", date=" + date +
+                ", created=" + created +
                 '}';
     }
 }

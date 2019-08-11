@@ -18,7 +18,7 @@
         <form action="/register" method="post">
             <div class="form-group">
                 <label for="userName">Nazwa Użytkownika</label>
-                <input type="text" class="form-control" id="userName" name="username" placeholder="podaj nazwę użytkownika">
+                <input type="text" class="form-control" id="userName" name="author" placeholder="podaj nazwę użytkownika">
             </div>
             <div class="form-group">
                 <label for="email">Email</label>

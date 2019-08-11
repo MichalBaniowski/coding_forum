@@ -23,8 +23,8 @@ public class CommentDaoImpl implements CommentDao {
 
     private CommentDaoImpl(){}
 
-    private static final String CREATE_COMMENT = "INSERT INTO comments (solution_id, username, description) " +
-            "VALUES(?, ?, ?);";
+    private static final String CREATE_COMMENT = "INSERT INTO comments (solution_id, username, description, date) " +
+            "VALUES(?, ?, ?, ?);";
     private static final String READ_COMMENT = "SELECT * FROM comments WHERE comment_id = ?;";
     private static final String READ_ALL_COMMENTS = "SELECT * FROM comments;";
     private static final String READ_ALL_COMMENTS_BY_USERNAME = "SELECT * FROM comments WHERE username = ?;";
@@ -71,6 +71,7 @@ public class CommentDaoImpl implements CommentDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new UpdateFailException("creation failure");
         }
         return newObject;
     }
@@ -124,14 +125,13 @@ public class CommentDaoImpl implements CommentDao {
         return new ArrayList<>();
     }
 
-    public Comment getCommentFromPreparedStatement(PreparedStatement preparedStatement)throws SQLException {
+    public Comment getCommentFromPreparedStatement(PreparedStatement preparedStatement) {
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
             if (resultSet.next()) {
                 return getCommentFromResultSet(resultSet);
             }
-        }
-        throw new SQLException("comment not found");
-
+        }catch (SQLException e) {}
+        throw new NotFoundException("comment not found");
     }
 
     public List<Comment> getAllCommentFromPreparedStatement(PreparedStatement preparedStatement) throws SQLException{
@@ -148,16 +148,17 @@ public class CommentDaoImpl implements CommentDao {
         Comment comment = new Comment();
         comment.setId(resultSet.getLong("comment_id"));
         comment.setSolutionId(resultSet.getLong("solution_id"));
-        comment.setUsername(resultSet.getString("username"));
+        comment.setAuthor(resultSet.getString("username"));
         comment.setDescription(resultSet.getString("description"));
-        comment.setDate(resultSet.getTimestamp("date"));
+        comment.setCreated(resultSet.getTimestamp("date"));
         return comment;
     }
 
     public void setCommentCreateColumn(Comment comment, PreparedStatement preparedStatement) throws SQLException{
         preparedStatement.setLong(1, comment.getSolutionId());
-        preparedStatement.setString(2, comment.getUsername());
+        preparedStatement.setString(2, comment.getAuthor());
         preparedStatement.setString(3, comment.getDescription());
+        preparedStatement.setTimestamp(4, comment.getCreated());
     }
 
     public void setCommentUpdateColumn(Comment comment, PreparedStatement preparedStatement) throws SQLException{

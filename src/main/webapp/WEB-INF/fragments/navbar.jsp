@@ -27,10 +27,17 @@
                             Menu
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#">Dodaj</a>
-                            <a class="dropdown-item" href="#">Twoje Grupy</a>
-                            <a class="dropdown-item" href="#">Twoje Rozwiązania</a>
-                            <a class="dropdown-item" href="#">Twoje Pytania</a>
+                            <c:choose>
+                                <c:when test="${sessionScope.user.active}">
+                                    <a class="dropdown-item" href="#">Dodaj</a>
+                                    <a class="dropdown-item" href="#">Twoje Grupy</a>
+                                    <a class="dropdown-item" href="#">Twoje Rozwiązania</a>
+                                    <a class="dropdown-item" href="#">Twoje Pytania</a>
+                                </c:when>
+                                <c:otherwise>
+                                    <p class="dropdown-item">konto nieaktywne</p>
+                                </c:otherwise>
+                            </c:choose>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="/edit-user">Edytuj dane</a>
                         </div>
@@ -45,7 +52,7 @@
                     <h5 class="text-light mr-3">Gość</h5>
                 </c:when>
                 <c:otherwise>
-                    <h5 class="text-light mr-3">${sessionScope.user.username}</h5>
+                    <h5 class="text-light mr-3">${sessionScope.user.author}</h5>
                 </c:otherwise>
             </c:choose>
         </div>

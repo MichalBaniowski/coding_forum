@@ -1,50 +1,51 @@
 package pl.michal_baniowski.coding_forum.model;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class Solution {
-    private long id;
+    private Long id;
     private Exercise exercise;
-    private String username;
+    private String author;
     private Timestamp created;
     private Timestamp updated;
     private String description;
-    private int upVote;
-    private int downVote;
+    private Set<Vote> votes;
 
     public Solution() {}
 
     public Solution(Solution solution){
         this.id = solution.id;
         this.exercise = new Exercise(solution.exercise);
-        this.username = solution.username;
+        this.author = solution.author;
         this.created = new Timestamp(solution.created.getTime());
         this.updated = new Timestamp(solution.updated.getTime());
         this.description = solution.description;
-        this.upVote = solution.upVote;
-        this.downVote = solution.downVote;
+        this.votes = solution.votes;
     }
 
-    public Solution(Exercise exercise, String username, Timestamp created, Timestamp updated, String description, int upVote, int downVote) {
+    public Solution(Exercise exercise, String author, Timestamp created, Timestamp updated, String description, Set<Vote> votes) {
         this.exercise = exercise;
-        this.username = username;
+        this.author = author;
         this.created = created;
         this.updated = updated;
         this.description = description;
-        this.upVote = upVote;
-        this.downVote = downVote;
+        this.votes = votes;
     }
 
-    public Solution(Exercise exercise, String username, String description, int upVote, int downVote) {
+    public Solution(Exercise exercise, String author, String description) {
         this.exercise = exercise;
-        this.username = username;
+        this.author = author;
+        this.created = Timestamp.valueOf(LocalDateTime.now());
+        this.updated = Timestamp.valueOf(LocalDateTime.now());
         this.description = description;
-        this.upVote = upVote;
-        this.downVote = downVote;
+        this.votes = new HashSet<>();
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -60,12 +61,12 @@ public class Solution {
         this.exercise = exercise;
     }
 
-    public String getUsername() {
-        return username;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public Timestamp getCreated() {
@@ -92,20 +93,12 @@ public class Solution {
         this.description = description;
     }
 
-    public int getUpVote() {
-        return upVote;
+    public Set<Vote> getVotes() {
+        return votes;
     }
 
-    public void setUpVote(int upVote) {
-        this.upVote = upVote;
-    }
-
-    public int getDownVote() {
-        return downVote;
-    }
-
-    public void setDownVote(int downVote) {
-        this.downVote = downVote;
+    public void setVotes(Set<Vote> votes) {
+        this.votes = votes;
     }
 
     @Override
@@ -114,10 +107,8 @@ public class Solution {
         if (!(o instanceof Solution)) return false;
         Solution solution = (Solution) o;
         return getId() == solution.getId() &&
-                getUpVote() == solution.getUpVote() &&
-                getDownVote() == solution.getDownVote() &&
                 getExercise().equals(solution.getExercise()) &&
-                getUsername().equals(solution.getUsername()) &&
+                getAuthor().equals(solution.getAuthor()) &&
                 getCreated().equals(solution.getCreated()) &&
                 getUpdated().equals(solution.getUpdated()) &&
                 getDescription().equals(solution.getDescription());
@@ -125,20 +116,18 @@ public class Solution {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getExercise(), getUsername(), getCreated(), getUpdated(), getDescription(), getUpVote(), getDownVote());
+        return Objects.hash(getId(), getExercise(), getAuthor(), getCreated(), getUpdated(), getDescription(), getVotes());
     }
 
     @Override
     public String toString() {
         return "Solution{" +
                 "id=" + id +
-                ", exercise=" + exercise +
-                ", username=" + username +
-                ", created=" + created +
-                ", updated=" + updated +
-                ", description='" + description + '\'' +
-                ", upVote=" + upVote +
-                ", downVote=" + downVote +
+                ", exercise= " + exercise +
+                ", author= " + author +
+                ", created= " + created +
+                ", updated= " + updated +
+                ", description= '" + description + '\'' +
                 '}';
     }
 }

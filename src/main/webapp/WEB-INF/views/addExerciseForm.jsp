@@ -15,20 +15,20 @@
 <body>
 <div class="container log-container">
     <div class="col-sm-12 col-md-10 centered">
-        <form action="#" method="post">
+        <form method="post">
             <div class="form-group">
                 <label for="exerciseTitle">tytuł zadania</label>
-                <input class="form-control" id="exerciseTitle" rows="6"/>
+                <input type="text" name="title" class="form-control" id="exerciseTitle" placeholder="tytuł zadania" rows="6"/>
             </div>
             <div class="form-group">
                 <label for="exerciseContent">treść zadania</label>
-                <textarea class="form-control" id="exerciseContent" rows="6"></textarea>
+                <textarea name="content" class="form-control" id="exerciseContent" placeholder="treść zadania" rows="6"></textarea>
             </div>
             <button type="submit" class="btn btn-primary btn-block">dodaj</button>
         </form>
     </div>
 </div>
-<jsp:include page="WEB-INF/fragments/footer.jsp"/>
+<jsp:include page="../fragments/footer.jsp"/>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
