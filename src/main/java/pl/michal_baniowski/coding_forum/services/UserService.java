@@ -6,6 +6,9 @@ import pl.michal_baniowski.coding_forum.model.User;
 import pl.michal_baniowski.coding_forum.services.message.EmailService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class UserService {
     private static UserService userService;
@@ -25,7 +28,9 @@ public class UserService {
         User user = new User();
         user.setUsername(request.getParameter("username"));
         user.setEmail(request.getParameter("email"));
-        user.setPassword(request.getParameter("password"));
+        String password = request.getParameter("password");
+        String md5Pass = encryptPassword(password);
+        user.setPassword(md5Pass);
         user.setActive(false);
         try {
             user = daoFactory.getUserDao().create(user);
@@ -34,6 +39,18 @@ public class UserService {
         }
         sendEmailWithActivationCode(user.getEmail(), user.getId());
         return true;
+    }
+
+    private String encryptPassword(String password) {
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        digest.update(password.getBytes());
+        String md5Password = new BigInteger(1, digest.digest()).toString(16);
+        return md5Password;
     }
 
     private void sendEmailWithActivationCode(String addressee, long userId) {
