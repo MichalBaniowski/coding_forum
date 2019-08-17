@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `coding_forum` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_polish_ci */;
+USE `coding_forum`;
 -- MySQL dump 10.13  Distrib 8.0.13, for Win64 (x86_64)
 --
 -- Host: localhost    Database: coding_forum
@@ -16,6 +18,32 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `activation_codes`
+--
+
+DROP TABLE IF EXISTS `activation_codes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `activation_codes` (
+  `code_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `code` varchar(20) COLLATE utf8_polish_ci NOT NULL,
+  PRIMARY KEY (`code_id`,`user_id`),
+  KEY `activation_codes_ibfk_1` (`user_id`),
+  CONSTRAINT `activation_codes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `activation_codes`
+--
+
+LOCK TABLES `activation_codes` WRITE;
+/*!40000 ALTER TABLE `activation_codes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `activation_codes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `comments`
 --
 
@@ -25,15 +53,15 @@ DROP TABLE IF EXISTS `comments`;
 CREATE TABLE `comments` (
   `comment_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `solution_id` int(10) unsigned NOT NULL,
-  `author` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `description` text COLLATE utf8_polish_ci NOT NULL,
-  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`comment_id`),
-  KEY `fk_solutions_has_users_users3_idx` (`author`),
+  KEY `fk_solutions_has_users_users3_idx` (`username`),
   KEY `fk_solutions_has_users_solutions2_idx` (`solution_id`),
   CONSTRAINT `fk_solutions_has_users_solutions2` FOREIGN KEY (`solution_id`) REFERENCES `solutions` (`solution_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_solutions_has_users_users3` FOREIGN KEY (`author`) REFERENCES `users` (`author`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+  CONSTRAINT `fk_solutions_has_users_users3` FOREIGN KEY (`username`) REFERENCES `users` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -56,8 +84,13 @@ CREATE TABLE `exercises` (
   `exercise_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `description` text COLLATE utf8_polish_ci NOT NULL,
-  PRIMARY KEY (`exercise_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  PRIMARY KEY (`exercise_id`),
+  KEY `fk_exercises_users1_idx` (`username`),
+  CONSTRAINT `fk_exercises_users1` FOREIGN KEY (`username`) REFERENCES `users` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,6 +123,7 @@ CREATE TABLE `role` (
 
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
+INSERT INTO `role` VALUES ('admin','admin role'),('user','basic user role');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -107,16 +141,12 @@ CREATE TABLE `solutions` (
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `description` text COLLATE utf8_polish_ci NOT NULL,
-  `up_vote` int(11) NOT NULL,
-  `down_vote` int(11) NOT NULL,
   PRIMARY KEY (`solution_id`),
-  UNIQUE KEY `exercise_id_UNIQUE` (`exercise_id`),
-  UNIQUE KEY `username_UNIQUE` (`author`),
   KEY `fk_exercises_has_users_users1_idx` (`author`),
   KEY `fk_exercises_has_users_exercises1_idx` (`exercise_id`),
   CONSTRAINT `fk_exercises_has_users_exercises1` FOREIGN KEY (`exercise_id`) REFERENCES `exercises` (`exercise_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_exercises_has_users_users1` FOREIGN KEY (`author`) REFERENCES `users` (`author`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+  CONSTRAINT `fk_exercises_has_users_users1` FOREIGN KEY (`author`) REFERENCES `users` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -140,7 +170,7 @@ CREATE TABLE `user_groups` (
   `name` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `description` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   PRIMARY KEY (`user_group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -160,13 +190,13 @@ DROP TABLE IF EXISTS `user_role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `user_role` (
-  `author` varchar(255) COLLATE utf8_polish_ci NOT NULL,
-  `role_name` varchar(45) COLLATE utf8_polish_ci NOT NULL,
-  PRIMARY KEY (`author`,`role_name`),
+  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `role_name` varchar(45) COLLATE utf8_polish_ci NOT NULL DEFAULT 'user',
+  PRIMARY KEY (`username`,`role_name`),
   KEY `fk_users_has_role_role1_idx` (`role_name`),
-  KEY `fk_users_has_role_users1_idx` (`author`),
+  KEY `fk_users_has_role_users1_idx` (`username`),
   CONSTRAINT `fk_users_has_role_role1` FOREIGN KEY (`role_name`) REFERENCES `role` (`role_name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_users_has_role_users1` FOREIGN KEY (`author`) REFERENCES `users` (`author`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_users_has_role_users1` FOREIGN KEY (`username`) REFERENCES `users` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -188,18 +218,15 @@ DROP TABLE IF EXISTS `users`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `users` (
   `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `author` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `email` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `password` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `is_active` tinyint(4) NOT NULL,
-  `user_group_id` int(10) unsigned DEFAULT NULL,
-  PRIMARY KEY (`user_id`,`author`),
-  UNIQUE KEY `usrename_UNIQUE` (`author`),
+  PRIMARY KEY (`user_id`,`username`),
+  UNIQUE KEY `username_UNIQUE` (`username`),
   UNIQUE KEY `user_id_UNIQUE` (`user_id`),
-  UNIQUE KEY `email_UNIQUE` (`email`),
-  KEY `fk_users_user_groups_idx` (`user_group_id`),
-  CONSTRAINT `fk_users_user_groups` FOREIGN KEY (`user_group_id`) REFERENCES `user_groups` (`user_group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+  UNIQUE KEY `email_UNIQUE` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -212,6 +239,34 @@ LOCK TABLES `users` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `users_user_groups`
+--
+
+DROP TABLE IF EXISTS `users_user_groups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `users_user_groups` (
+  `users_user_groups_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `user_group_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`users_user_groups_id`),
+  KEY `users_user_groups_ibfk_1` (`user_id`),
+  KEY `users_user_groups_ibfk_2` (`user_group_id`),
+  CONSTRAINT `users_user_groups_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `users_user_groups_ibfk_2` FOREIGN KEY (`user_group_id`) REFERENCES `user_groups` (`user_group_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users_user_groups`
+--
+
+LOCK TABLES `users_user_groups` WRITE;
+/*!40000 ALTER TABLE `users_user_groups` DISABLE KEYS */;
+/*!40000 ALTER TABLE `users_user_groups` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `vote`
 --
 
@@ -221,15 +276,14 @@ DROP TABLE IF EXISTS `vote`;
 CREATE TABLE `vote` (
   `vote_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `solution_id` int(10) unsigned NOT NULL,
-  `author` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `type` varchar(15) COLLATE utf8_polish_ci NOT NULL,
-  PRIMARY KEY (`vote_id`),
-  UNIQUE KEY `users_username_UNIQUE` (`author`),
-  KEY `fk_solutions_has_users_users2_idx` (`author`),
+  PRIMARY KEY (`vote_id`,`username`),
+  KEY `fk_solutions_has_users_users2_idx` (`username`),
   KEY `fk_solutions_has_users_solutions1_idx` (`solution_id`),
-  CONSTRAINT `fk_solutions_has_users_solutions1` FOREIGN KEY (`solution_id`) REFERENCES `solutions` (`solution_id`),
-  CONSTRAINT `fk_solutions_has_users_users2` FOREIGN KEY (`author`) REFERENCES `users` (`author`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+  CONSTRAINT `fk_solutions_has_users_solutions1` FOREIGN KEY (`solution_id`) REFERENCES `solutions` (`solution_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_solutions_has_users_users2` FOREIGN KEY (`username`) REFERENCES `users` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -250,4 +304,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-27 22:46:34
+-- Dump completed on 2019-08-17 13:38:31
