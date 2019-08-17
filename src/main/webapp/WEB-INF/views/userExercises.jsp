@@ -17,12 +17,18 @@
 <body>
 <jsp:include page="../fragments/navbar.jsp"/>
 
-<div class="container log-container">
-    <div class="col-sm-6 col-md-4 col-md-offset-4 centered">
-        <h3>
-            <c:out value="${operationResult}" default="operacja chyba się nie powiodła"/>
-        </h3>
+<div class="container conteiner-exercise">
+    <div class="page-header">
+        <h3>Twoje zadania</h3>
     </div>
+    <c:forEach items="${exercises}" var="exercise">
+        <div class="bs-callout bs-callout-primary exercise">
+            <h4 class="exercise-title"><a href="/exercise?id=${exercise.id}">${exercise.title}</a></h4>
+            <h6><small>dodane przez: ${exercise.username}, dnia: ${exercise.created}</small></h6>
+            <p class="description-text-short">${exercise.description}</p>
+        </div>
+    </c:forEach>
+
 </div>
 
 <jsp:include page="../fragments/footer.jsp"/>
@@ -35,4 +41,3 @@
 </body>
 
 </html>
-

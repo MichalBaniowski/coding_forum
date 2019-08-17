@@ -41,7 +41,7 @@ public class UserDaoImpl implements UserDao {
             "FROM users " +
             "WHERE user_id = ?;";
 
-    private static final String UPDATE_USER_QUERY = "UPDATE users SET username = ?, email = ?, password = ?, is_active = ? " +
+    private static final String UPDATE_USER_QUERY = "UPDATE users SET  email = ?, password = ?, is_active = ? " +
             "WHERE user_id = ?";
 
     private static final String USER_ROLE_QUERY = "INSERT INTO user_role (username, role_name) VALUES (?, ?);";
@@ -115,8 +115,8 @@ public class UserDaoImpl implements UserDao {
         int result = 0;
         try(Connection connection = DbUtil.getInstance().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_QUERY)){
-            setUserColumn(updateObject, preparedStatement);
-            preparedStatement.setLong(5, updateObject.getId());
+            setUpdateUserColumn(updateObject, preparedStatement);
+            preparedStatement.setLong(4, updateObject.getId());
             result = preparedStatement.executeUpdate();
         }catch (SQLException e){
             e.printStackTrace();
@@ -196,6 +196,12 @@ public class UserDaoImpl implements UserDao {
         preparedStatement.setString(2, user.getEmail());
         preparedStatement.setString(3, user.getPassword());
         preparedStatement.setInt(4, user.isActive() ? 1 : 0);
+    }
+
+    private void setUpdateUserColumn(User user, PreparedStatement preparedStatement) throws SQLException{
+        preparedStatement.setString(1, user.getEmail());
+        preparedStatement.setString(2, user.getPassword());
+        preparedStatement.setInt(3, user.isActive() ? 1 : 0);
     }
 
     private void setPrivilige(User user){

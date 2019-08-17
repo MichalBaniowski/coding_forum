@@ -2,9 +2,7 @@ package pl.michal_baniowski.coding_forum.model;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class Solution {
     private Long id;
@@ -14,6 +12,7 @@ public class Solution {
     private Timestamp updated;
     private String description;
     private Set<Vote> votes;
+    private List<Comment> comments;
 
     public Solution() {}
 
@@ -25,15 +24,17 @@ public class Solution {
         this.updated = new Timestamp(solution.updated.getTime());
         this.description = solution.description;
         this.votes = solution.votes;
+        this.comments = solution.comments;
     }
 
-    public Solution(Exercise exercise, String author, Timestamp created, Timestamp updated, String description, Set<Vote> votes) {
+    public Solution(Exercise exercise, String author, Timestamp created, Timestamp updated, String description, Set<Vote> votes, List<Comment> comments) {
         this.exercise = exercise;
         this.author = author;
         this.created = created;
         this.updated = updated;
         this.description = description;
         this.votes = votes;
+        this.comments = comments;
     }
 
     public Solution(Exercise exercise, String author, String description) {
@@ -43,6 +44,7 @@ public class Solution {
         this.updated = Timestamp.valueOf(LocalDateTime.now());
         this.description = description;
         this.votes = new HashSet<>();
+        this.comments = new ArrayList<>();
     }
 
     public Long getId() {
@@ -99,6 +101,26 @@ public class Solution {
 
     public void setVotes(Set<Vote> votes) {
         this.votes = votes;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public long getCountUpVotes() {
+        return votes.stream()
+                .filter(vote -> vote.getVoteType().equals(VoteType.VOTE_UP))
+                .count();
+    }
+
+    public long getCountDownVotes() {
+        return votes.stream()
+                .filter(vote -> vote.getVoteType().equals(VoteType.VOTE_DOWN))
+                .count();
     }
 
     @Override

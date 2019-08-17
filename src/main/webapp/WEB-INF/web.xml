@@ -9,6 +9,9 @@
         <error-code>403</error-code>
         <location>/WEB-INF/views/operationResultPrompt.jsp</location>
     </error-page>
+    <welcome-file-list>
+        <welcome-file>home</welcome-file>
+    </welcome-file-list>
 <!--  security  -->
     <security-constraint>
         <display-name>Login required</display-name>

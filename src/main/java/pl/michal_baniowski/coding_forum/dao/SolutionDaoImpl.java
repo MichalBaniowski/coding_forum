@@ -1,15 +1,13 @@
 package pl.michal_baniowski.coding_forum.dao;
 
+import pl.michal_baniowski.coding_forum.dao.interfacesDao.CommentDao;
 import pl.michal_baniowski.coding_forum.dao.interfacesDao.ExerciseDao;
 import pl.michal_baniowski.coding_forum.dao.interfacesDao.SolutionDao;
 import pl.michal_baniowski.coding_forum.dao.interfacesDao.VoteDao;
 import pl.michal_baniowski.coding_forum.dbUtil.DbUtil;
-import pl.michal_baniowski.coding_forum.model.Exercise;
-import pl.michal_baniowski.coding_forum.model.Solution;
-import pl.michal_baniowski.coding_forum.model.User;
+import pl.michal_baniowski.coding_forum.model.*;
 import pl.michal_baniowski.coding_forum.exception.NotFoundException;
 import pl.michal_baniowski.coding_forum.exception.UpdateFailException;
-import pl.michal_baniowski.coding_forum.model.Vote;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,6 +20,7 @@ public class SolutionDaoImpl implements SolutionDao {
     private static SolutionDaoImpl solutionDao;
     private ExerciseDao exerciseDao;
     private VoteDao voteDao;
+    private CommentDao commentDao;
 
     public synchronized static SolutionDaoImpl getInstance(){
         if(solutionDao == null){
@@ -33,6 +32,7 @@ public class SolutionDaoImpl implements SolutionDao {
     private SolutionDaoImpl(){
         this.exerciseDao = ExerciseDaoImpl.getInstance();
         this.voteDao = VoteDaoImpl.getInstance();
+        this.commentDao = CommentDaoImpl.getInstance();
     }
 
     private static final String CREATE_SOLUTION_QUERY =
@@ -179,11 +179,16 @@ public class SolutionDaoImpl implements SolutionDao {
         solution.setUpdated(resultSet.getTimestamp("updated"));
         solution.setDescription(resultSet.getString("description"));
         solution.setVotes(getSolutionVotes(solution.getId()));
+        solution.setComments(getSolutionComments(solution.getId()));
         return solution;
     }
 
     private Set<Vote> getSolutionVotes(Long solutionId) {
         return voteDao.getSolutionVotes(solutionId).stream().collect(Collectors.toSet());
+    }
+
+    private List<Comment> getSolutionComments(Long solutionId) {
+        return commentDao.getCommentsBySolution(solutionId);
     }
 
     public void setSolutionCreateColumn(Solution solution, PreparedStatement preparedStatement) throws SQLException{

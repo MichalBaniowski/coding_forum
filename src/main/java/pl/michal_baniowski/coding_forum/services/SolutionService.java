@@ -5,6 +5,8 @@ import pl.michal_baniowski.coding_forum.dao.factoryDao.DaoFactory;
 import pl.michal_baniowski.coding_forum.dao.interfacesDao.SolutionDao;
 import pl.michal_baniowski.coding_forum.model.Solution;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class SolutionService {
@@ -44,6 +46,7 @@ public class SolutionService {
     }
 
     public boolean updateSolution(Solution solution) {
+        solution.setUpdated(Timestamp.valueOf(LocalDateTime.now()));
         return solutionDao.update(solution);
     }
 

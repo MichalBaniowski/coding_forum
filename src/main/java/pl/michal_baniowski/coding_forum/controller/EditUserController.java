@@ -47,7 +47,6 @@ public class EditUserController extends HttpServlet {
     }
 
     private void editUser(User updatedUser, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        updatedUser.setUsername(request.getParameter("username"));
         updatedUser.setEmail(request.getParameter("email"));
         String newPassword = request.getParameter("candidate");
         if (newPassword != null && !newPassword.isEmpty()) {

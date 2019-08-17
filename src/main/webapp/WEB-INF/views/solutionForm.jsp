@@ -17,12 +17,18 @@
     <div class="col-sm-12 col-md-10 centered">
         <form method="post">
             <div class="form-group">
-                <label for="exerciseTitle">tytuł zadania</label>
-                <input type="text" name="title" class="form-control" id="exerciseTitle" placeholder="tytuł zadania" rows="6"/>
+                <input name="exerciseId" hidden value="${solution.exercise.id}"/>
             </div>
             <div class="form-group">
-                <label for="exerciseContent">treść zadania</label>
-                <textarea name="content" class="form-control" id="exerciseContent" placeholder="treść zadania" rows="6"></textarea>
+                <input name="solutionId" hidden value="${solution.id}"/>
+            </div>
+            <div class="form-group">
+                <label for="descriptionContent">treść rozwiązania</label>
+                <textarea name="description"
+                          class="form-control"
+                          id="descriptionContent"
+                          placeholder="treść rozwiązania"
+                          rows="6">${solution.description}</textarea>
             </div>
             <button type="submit" class="btn btn-primary btn-block">dodaj</button>
         </form>

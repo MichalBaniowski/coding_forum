@@ -29,7 +29,7 @@ public class ActivationService {
             saveCodeToDb(id, code);
         }
         //eventually domain address
-        return String.format("http://192.168.0.12:8080/account-activation?id=%d&code=%s", id, code);
+        return String.format("http://localhost:8080/account-activation?id=%d&code=%s", id, code);
     }
 
     public boolean checkActivationCode(long userId, String candidate) {

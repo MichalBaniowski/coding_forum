@@ -1,8 +1,7 @@
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>zarejestruj się do Coding Forum</title>
+    <title>Dodaj zadanie</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <meta name="viewport" content="width=device-width, initioal-scale=1.0">
 
@@ -15,33 +14,28 @@
 </head>
 <body>
 <div class="container log-container">
-    <div class="col-sm-6 col-md-4 col-md-offset-4 centered">
-        <form action="/edit-user" method="post">
+    <div class="col-sm-12 col-md-10 centered">
+        <form method="post">
             <div class="form-group">
-                <label for="userName">Nazwa Użytkownika</label>
-                <input type="text" disabled class="form-control" id="userName" name="username" value="${user.username}" required>
+                <input name="exerciseId" hidden value="${exerciseToEdit.id}">
             </div>
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" name="email" value="${user.email}" required>
+                <label for="exerciseTitle">tytuł zadania</label>
+                <input type="text" name="title"
+                       class="form-control"
+                       id="exerciseTitle"
+                       placeholder="tytuł zadania"
+                       value="${exerciseToEdit.title}" rows="6"/>
             </div>
             <div class="form-group">
-                <label for="password">Hasło</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="podaj hasło">
+                <label for="exerciseContent">treść zadania</label>
+                <textarea name="content"
+                          class="form-control"
+                          id="exerciseContent"
+                          placeholder="treść zadania"
+                          rows="6">${exerciseToEdit.description}</textarea>
             </div>
-            <div class="form-group">
-                <label for="newPassword">Nowe Hasło</label>
-                <input type="password" class="form-control" id="newPassword" name="candidate" placeholder="nowe hasło">
-            </div>
-            <div class="form-group">
-                <label for="newSecondPassword">Powtórz Hasło</label>
-                <input type="password" class="form-control" id="newSecondPassword" placeholder="powtórz hasło">
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Edytuj</button>
-        </form>
-        <form action="/edit-user" method="post">
-            <input type="checkbox" name="deleteUser" value="delete" hidden checked>
-            <button type="submit" class="btn btn-primary btn-block" id="delete-user-btn">Usuń konto</button>
+            <button type="submit" class="btn btn-primary btn-block">dodaj</button>
         </form>
     </div>
 </div>
@@ -58,4 +52,3 @@
 </script>
 </body>
 </html>
-

@@ -2,7 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="index.jsp">Coding Forum</a>
+    <a class="navbar-brand" href="/home">Coding Forum</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -29,10 +29,10 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <c:choose>
                                 <c:when test="${sessionScope.user.active}">
-                                    <a class="dropdown-item" href="#">Dodaj</a>
-                                    <a class="dropdown-item" href="#">Twoje Grupy</a>
-                                    <a class="dropdown-item" href="#">Twoje Rozwiązania</a>
-                                    <a class="dropdown-item" href="#">Twoje Pytania</a>
+                                    <a class="dropdown-item" href="/user/add-exercise">Dodaj Zadanie</a>
+                                    <a class="dropdown-item" href="/user/exercises">Twoje Zadania</a>
+                                    <a class="dropdown-item" href="/user/solutions">Twoje Rozwiązania</a>
+                                    <a class="dropdown-item" href="/user/comments">Twoje Komentarze</a>
                                 </c:when>
                                 <c:otherwise>
                                     <p class="dropdown-item">konto nieaktywne</p>
@@ -52,7 +52,7 @@
                     <h5 class="text-light mr-3">Gość</h5>
                 </c:when>
                 <c:otherwise>
-                    <h5 class="text-light mr-3">${sessionScope.user.author}</h5>
+                    <h5 class="text-light mr-3">${sessionScope.user.username}</h5>
                 </c:otherwise>
             </c:choose>
         </div>

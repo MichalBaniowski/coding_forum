@@ -15,22 +15,21 @@
 
 </head>
 <body>
-<jsp:include page="WEB-INF/fragments/navbar.jsp"/>
+<jsp:include page="../fragments/navbar.jsp"/>
 
 <div class="container conteiner-exercise">
-    <div class="bs-callout bs-callout-primary exercise">
-        <h4 class="exercise-title"><a href="exercise.jsp">ćwiczenie nr 1</a></h4>
-        <h6><small>dodane przez: urzytkownik 2, dnia: 02.luty.2019</small></h6>
-        <p class="description-text-short">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque mattis nisl a ipsum dictum porta. Praesent facilisis diam quis fringilla semper. Duis pharetra sapien nulla, a malesuada arcu luctus vel. Maecenas eu dolor urna.
-            In sollicitudin tempor ligula, id blandit urna condimentum quis. Quisque venenatis arcu quam, vitae pretium felis placerat posuere. Etiam efficitur nisi ut dolor vehicula, ac posuere leo egestas.
-            In quis ipsum eu felis iaculis imperdiet et sit amet massa. In consectetur dui tellus, eu vulputate lorem condimentum sed. Etiam pretium et massa eget pellentesque. Phasellus luctus mauris non arcu gravida, vel finibus
-            libero ullamcorper. Ut nec sapien libero. Sed eu arcu augue. Ut ac vestibulum nunc, nec cursus metus.</p>
-        <h6><small>ilość rozwiązań</small></h6>
-    </div>
+    
+    <c:forEach items="${exercises}" var="exercise">
+        <div class="bs-callout bs-callout-primary exercise">
+            <h4 class="exercise-title"><a href="/exercise?id=${exercise.id}">${exercise.title}</a></h4>
+            <h6><small>dodane przez: ${exercise.username}, dnia: ${exercise.created}</small></h6>
+            <p class="description-text-short">${exercise.description}</p>
+        </div>
+    </c:forEach>
 
 </div>
 
-<jsp:include page="WEB-INF/fragments/footer.jsp"/>
+<jsp:include page="../fragments/footer.jsp"/>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
 </script>

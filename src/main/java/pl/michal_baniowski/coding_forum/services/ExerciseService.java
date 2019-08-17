@@ -4,6 +4,8 @@ import pl.michal_baniowski.coding_forum.dao.factoryDao.DaoFactory;
 import pl.michal_baniowski.coding_forum.dao.interfacesDao.ExerciseDao;
 import pl.michal_baniowski.coding_forum.model.Exercise;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ExerciseService {
@@ -31,6 +33,7 @@ public class ExerciseService {
     }
 
     public boolean updateExercise(Exercise exercise) {
+        exercise.setUpdated(Timestamp.valueOf(LocalDateTime.now()));
         return exerciseDao.update(exercise);
     }
 
