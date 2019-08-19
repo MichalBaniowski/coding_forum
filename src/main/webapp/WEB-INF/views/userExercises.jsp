@@ -21,6 +21,13 @@
     <div class="page-header">
         <h3>Twoje zadania</h3>
     </div>
+    <c:if test="${exercises.size() == 0}">
+        <div class="col-sm-6 col-md-4 col-md-offset-4 centered">
+            <h3>
+                Brak zadań
+            </h3>
+        </div>
+    </c:if>
     <c:forEach items="${exercises}" var="exercise">
         <div class="bs-callout bs-callout-primary exercise">
             <h4 class="exercise-title"><a href="/exercise?id=${exercise.id}">${exercise.title}</a></h4>

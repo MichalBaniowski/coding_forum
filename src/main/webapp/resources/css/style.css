@@ -1,6 +1,10 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
 .footer {
     margin-top: 10px;
-    position: fixed;
+    position: absolute;
     bottom: 0;
     width: 100%;
     font-size: x-small;
