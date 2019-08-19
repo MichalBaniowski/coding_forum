@@ -40,7 +40,7 @@ There are 3 basic model objects:
     - add / edit / delete exercise, solution, comment
     - can like or dislike someones solution
 * other features:
-  - sending email with activation account link
+  - sending an email with activation account link
 
 * Design pattern used:
   - Data Access Object
