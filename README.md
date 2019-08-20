@@ -22,6 +22,7 @@ There are 3 basic model objects:
 ![admin panel](img/exercise.png)
 
 ## Technologies
+* Java 8
 * Java EE 
   - servlet-api - version - 4.0.1
   - jstl - version - 1.2
